@@ -11,16 +11,22 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.TreeMap;
 
 @JsonSerialize(using = Config.JsonSerializer.class)
 @JsonDeserialize(using = Config.JsonDeserializer.class)
 public class Config {
 
-    private final Map<String, Object> nodes = new TreeMap<>();
+    private final TreeMap<String, Object> nodes;
+
+    public Config(){
+        nodes = new TreeMap<>();
+    }
+
+    protected Config(Config config){
+        this.nodes = config.nodes;
+    }
 
     public void addNode(String name, String value){
         nodes.put(name, value);
@@ -42,8 +48,26 @@ public class Config {
         nodes.put(name, value);
     }
 
+    public void addNode(ConfigNode node) {
+        if(node.value instanceof String){
+            addNode(node.name, (String) node.value);
+        }else if(node.value instanceof Integer){
+            addNode(node.name, (int) node.value);
+        }else if(node.value instanceof Double){
+            addNode(node.name, (double) node.value);
+        }else if(node.value instanceof Long){
+            addNode(node.name, (long) node.value);
+        }else if(node.value instanceof Boolean){
+            addNode(node.name, (boolean) node.value);
+        }
+    }
+
     public Object get(String name){
         return nodes.get(name);
+    }
+
+    protected ConfigNode getAsNode(String name){
+        return new ConfigNode(name, get(name));
     }
 
     public String getString(String name){
@@ -88,6 +112,10 @@ public class Config {
 
     public boolean containsNode(String name){
         return nodes.containsKey(name);
+    }
+
+    protected TreeMap<String, Object> getNodes(){
+        return nodes;
     }
 
     @Override
