@@ -86,6 +86,10 @@ public class Config {
         return false;
     }
 
+    public boolean containsNode(String name){
+        return nodes.containsKey(name);
+    }
+
     @Override
     public String toString() {
         return "Config{" +

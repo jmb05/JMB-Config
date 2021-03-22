@@ -5,6 +5,16 @@ plugins {
 group 'net.jmb19905'
 version '1.0-SNAPSHOT'
 
+jar {
+    archiveName "JMB-Config-${project.version}.jar"
+    baseName "JMB-Config-${project.version}"
+    from {
+        compileJava.classpath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
+
 repositories {
     mavenCentral()
 }
